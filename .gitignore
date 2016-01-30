@@ -3,3 +3,4 @@
 target
 download
 .vagrant
+*.DS_Store

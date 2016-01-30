@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by yangxg on 16/1/14.
@@ -68,88 +69,88 @@ public class BuildEnv {
     public static void main(String[] args) throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(4);
 
-//        for (BuildThread bt : threadList) {
-//            bt.configHostName();
-//        }
-//        System.out.println("配置网络完毕");
-//
-//        for (final BuildThread bt : threadList) {
-//            executor.execute(new Runnable() {
-//                @Override
-//                public void run() {
-//                    try {
-//                        bt.installRequired();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            });
-//        }
-//        executor.shutdown();
-//        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-//        System.out.println("已安装必要的组件");
-//
-//        for (BuildThread bt : threadList) {
-//            bt.installLocalRpm();
-//        }
-//        System.out.println("安装jdk和mariadb完毕");
-//        for (BuildThread bt : threadList) {
-//            bt.configJava();
-//        }
-//        System.out.println("配置jdk环境变量");
-//        for (final BuildThread bt : threadList) {
-//            bt.clearSSH("root");
-//        }
-//        for (final BuildThread bt : threadList) {
-//            bt.configSSH("root");
-//        }
-//        System.out.println("已配置ssh无密码登录");
-//        for (int i = threadList.size() - 2; i >= 0; i--) {
-//            BuildThread bt = threadList.get(i);
-//            bt.copyConfig(i == 0);
-//        }
-//        for (int i = threadList.size() - 2; i >= 1; i--) {
-//            BuildThread bt = threadList.get(i);
-//            bt.startMysql();
-//        }
-//        System.out.println("安装MariaDB完成");
-//        for (int i = threadList.size() - 2; i >= 0; i--) {
-//            BuildThread bt = threadList.get(i);
-//            bt.configMysqlRootLogin();
-//        }
-//        System.out.println("配置mysql root用户远程登录");
-//        threadList.get(threadList.size() - 1).configHaproxy();
-//        for (int i = threadList.size() - 2; i >= 0; i--) {
-//            BuildThread bt = threadList.get(i);
-//            bt.installRedis();
-//        }
-//        for (int i = threadList.size() - 2; i >= 0; i--) {
-//            BuildThread bt = threadList.get(i);
-//            bt.configRedisCluster();
-//        }
-//        threadList.get(0).createRedisCluster();
-//        System.out.println("redis集群配置完毕");
-//        for (int i = threadList.size() - 2; i >= 0; i--) {
-//            BuildThread bt = threadList.get(i);
-//            bt.installMongo();
-//        }
-//        for (int i = threadList.size() - 2; i >= 0; i--) {
-//            BuildThread bt = threadList.get(i);
-//            bt.copyMongodbConfig();
-//        }
-//        for (int i = threadList.size() - 2; i >= 0; i--) {
-//            BuildThread bt = threadList.get(i);
-//            bt.startShardServer();
-//        }
-//
-//        for (int i = threadList.size() - 2; i >= 0; i--) {
-//            BuildThread bt = threadList.get(i);
-//            bt.startConfigServer();
-//        }
-//        for (int i = threadList.size() - 2; i >= 0; i--) {
-//            BuildThread bt = threadList.get(i);
-//            bt.startQueryRouters();
-//        }
+        for (BuildThread bt : threadList) {
+            bt.configHostName();
+        }
+        System.out.println("配置网络完毕");
+
+        for (final BuildThread bt : threadList) {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        bt.installRequired();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        executor.shutdown();
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        System.out.println("已安装必要的组件");
+
+        for (BuildThread bt : threadList) {
+            bt.installLocalRpm();
+        }
+        System.out.println("安装jdk和mariadb完毕");
+        for (BuildThread bt : threadList) {
+            bt.configJava();
+        }
+        System.out.println("配置jdk环境变量");
+        for (final BuildThread bt : threadList) {
+            bt.clearSSH("root");
+        }
+        for (final BuildThread bt : threadList) {
+            bt.configSSH("root");
+        }
+        System.out.println("已配置ssh无密码登录");
+        for (int i = threadList.size() - 2; i >= 0; i--) {
+            BuildThread bt = threadList.get(i);
+            bt.copyConfig(i == 0);
+        }
+        for (int i = threadList.size() - 2; i >= 1; i--) {
+            BuildThread bt = threadList.get(i);
+            bt.startMysql();
+        }
+        System.out.println("安装MariaDB完成");
+        for (int i = threadList.size() - 2; i >= 0; i--) {
+            BuildThread bt = threadList.get(i);
+            bt.configMysqlRootLogin();
+        }
+        System.out.println("配置mysql root用户远程登录");
+        threadList.get(threadList.size() - 1).configHaproxy();
+        for (int i = threadList.size() - 2; i >= 0; i--) {
+            BuildThread bt = threadList.get(i);
+            bt.installRedis();
+        }
+        for (int i = threadList.size() - 2; i >= 0; i--) {
+            BuildThread bt = threadList.get(i);
+            bt.configRedisCluster();
+        }
+        threadList.get(0).createRedisCluster();
+        System.out.println("redis集群配置完毕");
+        for (int i = threadList.size() - 2; i >= 0; i--) {
+            BuildThread bt = threadList.get(i);
+            bt.installMongo();
+        }
+        for (int i = threadList.size() - 2; i >= 0; i--) {
+            BuildThread bt = threadList.get(i);
+            bt.copyMongodbConfig();
+        }
+        for (int i = threadList.size() - 2; i >= 0; i--) {
+            BuildThread bt = threadList.get(i);
+            bt.startShardServer();
+        }
+
+        for (int i = threadList.size() - 2; i >= 0; i--) {
+            BuildThread bt = threadList.get(i);
+            bt.startConfigServer();
+        }
+        for (int i = threadList.size() - 2; i >= 0; i--) {
+            BuildThread bt = threadList.get(i);
+            bt.startQueryRouters();
+        }
         threadList.get(0).configMongoShard();
         for (int i = threadList.size() - 2; i >= 0; i--) {
             final BuildThread bt = threadList.get(i);

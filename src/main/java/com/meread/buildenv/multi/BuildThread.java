@@ -12,12 +12,10 @@ import freemarker.template.TemplateException;
 import net.sf.expectit.Expect;
 import net.sf.expectit.ExpectBuilder;
 import net.sf.expectit.MultiResult;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -385,9 +383,9 @@ public class BuildThread {
         ready(ROOT_USER);
         expect.sendLine("gem install redis");
         ready(ROOT_USER);
-        expect.sendLine("\\cp -f /vagrant/src/main/resources/6379.conf /etc/redis/6379.conf");
+        expect.sendLine("\\cp -f /vagrant/src/main/resources/redis/6379.conf /etc/redis/6379.conf");
         ready(ROOT_USER);
-        expect.sendLine("\\cp -f /vagrant/src/main/resources/6380.conf /etc/redis/6380.conf");
+        expect.sendLine("\\cp -f /vagrant/src/main/resources/redis/6380.conf /etc/redis/6380.conf");
         ready(ROOT_USER);
         expect.sendLine("gem install redis");
         ready(ROOT_USER);
@@ -454,14 +452,14 @@ public class BuildThread {
         expect.expect(contains(">"));
         expect.sendLine("use admin");
         expect.expect(contains(">"));
-        InputStream resource = getClass().getClassLoader().getResourceAsStream("mongo/sh0.bson");
-        String content = IOUtils.toString(resource, StandardCharsets.UTF_8);
-        String sh0 = "cfg=" + content;
+        InputStream resource0 = getClass().getClassLoader().getResourceAsStream("mongo/sh0.bson");
+        String content0 = IOUtils.toString(resource0, StandardCharsets.UTF_8);
+        String sh0 = "cfg=" + content0;
         System.out.println(sh0);
         expect.sendLine(sh0);
         expect.expect(contains(">"));
         expect.sendLine("rs.initiate(cfg);");
-        expect.expect(contains("OTHER>"));
+        expect.expect(anyOf(contains("PRIMARY>"), contains("OTHER>"), contains("SECONDARY>")));
         expect.sendLine("exit");
         ready(ROOT_USER);
 
@@ -470,13 +468,14 @@ public class BuildThread {
         expect.expect(contains(">"));
         expect.sendLine("use admin");
         expect.expect(contains(">"));
-        String path = getClass().getClassLoader().getResource("").getFile();
-        String sh1 = "cfg=" + FileUtils.readFileToString(new File(path + "/mongo/sh1.bson"));
+        InputStream resource1 = getClass().getClassLoader().getResourceAsStream("mongo/sh1.bson");
+        String content1 = IOUtils.toString(resource1, StandardCharsets.UTF_8);
+        String sh1 = "cfg=" + content1;
         System.out.println(sh1);
         expect.sendLine(sh1);
         expect.expect(contains(">"));
         expect.sendLine("rs.initiate(cfg);");
-        expect.expect(contains("OTHER>"));
+        expect.expect(anyOf(contains("PRIMARY>"), contains("OTHER>"), contains("SECONDARY>")));
         expect.sendLine("exit");
         ready(ROOT_USER);
 

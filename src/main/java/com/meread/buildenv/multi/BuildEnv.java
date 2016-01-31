@@ -120,10 +120,24 @@ public class BuildEnv {
         }
         System.out.println("配置mysql root用户远程登录");
         threadList.get(threadList.size() - 1).configHaproxy();
+
+        executor = Executors.newFixedThreadPool(3);
         for (int i = threadList.size() - 2; i >= 0; i--) {
-            BuildThread bt = threadList.get(i);
-            bt.installRedis();
+            final BuildThread bt = threadList.get(i);
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        bt.installRedis();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
+        executor.shutdown();
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+
         for (int i = threadList.size() - 2; i >= 0; i--) {
             BuildThread bt = threadList.get(i);
             bt.configRedisCluster();
@@ -167,23 +181,6 @@ public class BuildEnv {
             bt.destroy();
         }
 
-    }
-
-    public static void run() {
-        //        配置hostname
-        executeCommand("cd  /Users/yangxg/easou/vagrant");
-        executeCommand("vagrant up");
-        List<BuildThread> threadList = new ArrayList<>();
-        for (HostInfo hi : BuildEnv.ALL_HOST) {
-            BuildThread bt = new BuildThread(hi);
-            threadList.add(bt);
-        }
-        //yum install haproxy keepalived socat
-        //chkconfig haproxy on
-        //chkconfig keepalived on
-        for (final BuildThread bt : threadList) {
-            bt.destroy();
-        }
     }
 
 }

@@ -20,12 +20,10 @@ public class MongoTest {
         MongoClient mongoClient = new MongoClient(Arrays.asList(new ServerAddress("11.11.11.101", 30000),
                 new ServerAddress("11.11.11.102", 30000), new ServerAddress("11.11.11.103", 30000)), mcops);
         MongoIterable<String> dbNames = mongoClient.listDatabaseNames();
+        String host = mongoClient.getAddress().getHost();
+        System.out.println(host);
         for (String dbName : dbNames) {
             System.out.println(dbName);
-        }
-        for (int i = 0; i < 10; i++) {
-            ServerAddress address = mongoClient.getAddress();
-            System.out.println(address.getHost());
         }
     }
 }

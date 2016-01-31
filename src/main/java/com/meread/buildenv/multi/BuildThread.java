@@ -305,8 +305,6 @@ public class BuildThread {
         expect.expect(contains("Complete!"));
         expect.sendLine("chkconfig haproxy on");
         ready(ROOT_USER);
-        expect.sendLine("chkconfig keepalived on");
-        ready(ROOT_USER);
         expect.sendLine("\\cp -f /vagrant/src/main/resources/haproxy.cfg /etc/haproxy/haproxy.cfg");
         ready(ROOT_USER);
         expect.sendLine("mysql -uroot -h11.11.11.101 -pvagrant -e \"CREATE USER 'haproxy'@'11.11.11.101';\"");

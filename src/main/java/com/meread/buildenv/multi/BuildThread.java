@@ -501,8 +501,12 @@ public class BuildThread {
 
         expect.sendLine("exit");
         ready(ROOT_USER);
+    }
 
+    public void configMongoAutorun() throws IOException {
         expect.sendLine("\\cp -f /vagrant/src/main/resources/mongo/rc.local /etc/rc.local");
+        ready(ROOT_USER);
+        expect.sendLine("chmod +x /etc/rc.d/rc.local");
         ready(ROOT_USER);
     }
 
@@ -604,6 +608,5 @@ public class BuildThread {
         expect.sendLine("~/bin/hdfs dfs -cat /output01/part-r-00000 ");
         ready(HADOOP_USER);
     }
-
 
 }

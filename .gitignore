@@ -5,3 +5,4 @@ download
 .vagrant
 *.DS_Store
 logs
+*.box

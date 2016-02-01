@@ -6,7 +6,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
@@ -15,7 +14,8 @@ import java.net.URISyntaxException;
 public class WriteHDFS {
     public static void main(String[] args) throws URISyntaxException, IOException {
         Configuration configuration = new Configuration();
-        FileSystem hdfs = FileSystem.get(URI.create("hdfs://11.11.11.101:9000"), configuration);
+        configuration.set("fs.defaultFS", "hdfs://11.11.11.101:9000");
+        FileSystem hdfs = FileSystem.get(configuration);
         String licenseFilePath = WriteHDFS.class.getClassLoader().getResource("apache.license.txt").getFile();
         Path src = new Path(licenseFilePath);
         if (hdfs.exists(src)) {

@@ -579,6 +579,8 @@ public class BuildThread {
         ready(HADOOP_USER);
         expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/hdfs-site-master.xml ~/etc/hadoop/hdfs-site.xml");
         ready(HADOOP_USER);
+        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/mapred-site.xml ~/etc/hadoop/mapred-site.xml");
+        ready(HADOOP_USER);
         expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/yarn-site.xml ~/etc/hadoop/yarn-site.xml");
         ready(HADOOP_USER);
         expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/slaves ~/etc/hadoop/slaves");

@@ -3,6 +3,7 @@ package com.meread.buildenv.test.hadoop;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.security.UserGroupInformation;
+import org.junit.Test;
 
 import java.security.PrivilegedExceptionAction;
 
@@ -10,7 +11,9 @@ import java.security.PrivilegedExceptionAction;
  * Created by yangxg on 16/2/2.
  */
 public class LocalTest {
-    public static void main(String[] args) {
+
+    @Test
+    public void hadoopTest() {
         UserGroupInformation ugi
                 = UserGroupInformation.createRemoteUser("root");
         try {

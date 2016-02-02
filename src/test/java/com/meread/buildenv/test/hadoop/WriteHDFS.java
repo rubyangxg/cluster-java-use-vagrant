@@ -4,6 +4,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -12,7 +13,8 @@ import java.net.URISyntaxException;
  * Created by yangxg on 16/2/1.
  */
 public class WriteHDFS {
-    public static void main(String[] args) throws URISyntaxException, IOException {
+    @Test
+    public void hadoopTest() throws URISyntaxException, IOException {
         Configuration configuration = new Configuration();
         configuration.set("fs.defaultFS", "hdfs://11.11.11.101:9000");
         // in case you are running mapreduce job , need to set

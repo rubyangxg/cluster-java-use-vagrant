@@ -11,6 +11,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
     node.vm.network :private_network, ip: "11.11.11.101"
     node.vm.hostname = "node1"
+    node.vm.network "forwarded_port", guest: 50070, host: 50070
+    node.vm.network "forwarded_port", guest: 8088, host: 8088
+    node.vm.network "forwarded_port", guest: 80, host: 8081
     node.vm.provision "shell", inline: <<-SHELL
       /etc/rc.d/init.d/mysql bootstrap
     SHELL
@@ -25,6 +28,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
       node.vm.network :private_network, ip: "11.11.11.10#{i}"
       node.vm.hostname = "node#{i}"
+      node.vm.network "forwarded_port", guest: 50070, host: 50070
+      node.vm.network "forwarded_port", guest: 8088, host: 8088
+      node.vm.network "forwarded_port", guest: 80, host: 8081
       node.vm.provision "shell", inline: <<-SHELL
         systemctl start mysql
       SHELL

@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
  */
 public class WriteHDFS {
 
-    private static final String hdfsUrl = "hdfs://11.11.11.101:9000";
     @Test
     public void hadoopTest() throws URISyntaxException, IOException {
         HDFSUpload upload = new HDFSUpload();

@@ -529,7 +529,7 @@ public class BuildThread {
         expect.sendLine("su " + HADOOP_USER);
         ready(HADOOP_USER);
         configSSH(HADOOP_USER);
-        expect.sendLine("tar zxf /vagrant/download/hadoop-2.6.3.tar.gz -C /usr/hadoop --strip-components 1 ");
+        expect.sendLine("tar zxf /vagrant/download/hadoop-2.6.2.tar.gz -C /usr/hadoop --strip-components 1 ");
         ready(HADOOP_USER);
         expect.sendLine("echo -e ' ' >> ~/.bash_profile");
         ready(HADOOP_USER);
@@ -607,7 +607,7 @@ public class BuildThread {
         ready(HADOOP_USER);
         expect.sendLine("~/bin/hdfs dfs -cat /test/NOTICE.txt");
         ready(HADOOP_USER);
-        expect.sendLine("~/bin/hadoop jar ~/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.3.jar wordcount /test/NOTICE.txt /output01");
+        expect.sendLine("~/bin/hadoop jar ~/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.2.jar wordcount /test/NOTICE.txt /output01");
         ready(HADOOP_USER);
         expect.sendLine("~/bin/hdfs dfs -ls /output01");
         ready(HADOOP_USER);

@@ -15,6 +15,8 @@ public class WriteHDFS {
     public static void main(String[] args) throws URISyntaxException, IOException {
         Configuration configuration = new Configuration();
         configuration.set("fs.defaultFS", "hdfs://11.11.11.101:9000");
+        // in case you are running mapreduce job , need to set
+        // 'mapred.job.tracker' as you did
         FileSystem hdfs = FileSystem.get(configuration);
         String licenseFilePath = WriteHDFS.class.getClassLoader().getResource("apache.license.txt").getFile();
         Path src = new Path(licenseFilePath);

@@ -519,6 +519,8 @@ public class BuildThread {
         expect.expect(contains("Retype"));
         expect.sendLine("vagrant");
         ready(ROOT_USER);
+        expect.sendLine("chmod 755 /usr/hadoop/.bash_profile");
+        ready(ROOT_USER);
     }
 
     public void copyHadoopConfig() throws IOException {

@@ -38,7 +38,7 @@ public class RedisTest {
 
     @Test
     public void set() {
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100; i++) {
             jedisCluster.set("key" + i, "value" + i);
         }
     }

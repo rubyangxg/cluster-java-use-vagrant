@@ -21,7 +21,7 @@
     </property>
     <property>
         <name>yarn.nodemanager.hostname</name>
-        <value>node2</value>
+        <value>node1</value>
     </property>
     <property>
         <name>yarn.nodemanager.aux-services</name>

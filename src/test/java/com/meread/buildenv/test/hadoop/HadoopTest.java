@@ -4,6 +4,11 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,10 +25,12 @@ public class HadoopTest {
     private static final String hdfsUrl = "hdfs://node1:9000";
 
     private FileSystem fs;
+    private Configuration conf;
 
     @Before
     public void getConf() throws URISyntaxException, IOException {
-        Configuration conf = new Configuration();
+        conf = new Configuration();
+        conf.set("fs.defaultFS", hdfsUrl);
         URI uri = new URI(hdfsUrl);
         fs = FileSystem.get(uri, conf);
     }
@@ -43,8 +50,8 @@ public class HadoopTest {
 
     @Test
     public void del() throws URISyntaxException, IOException {
-        Path destFile = new Path("/apache.license.txt");
-        fs.delete(destFile, false);
+        Path destFile = new Path("/output02");
+        fs.delete(destFile, true);
     }
 
     @Test
@@ -58,6 +65,20 @@ public class HadoopTest {
             System.out.printf("name: %s, folder: %s, size: %d\n", f.getPath(), f.isDirectory(), f.getLen());
         }
         System.out.println("==========================================================");
+    }
+
+    @Test
+    public void wordCount() throws URISyntaxException, IOException, ClassNotFoundException, InterruptedException {
+        Job job = Job.getInstance(conf, "wordcount");
+        job.setJarByClass(WordCount.class);
+        job.setMapperClass(TokenizerMapper.class);
+        job.setCombinerClass(IntSumReducer.class);
+        job.setReducerClass(IntSumReducer.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+        FileInputFormat.addInputPath(job, new Path("/apache.license.txt"));
+        FileOutputFormat.setOutputPath(job, new Path("/output01"));
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 
 }

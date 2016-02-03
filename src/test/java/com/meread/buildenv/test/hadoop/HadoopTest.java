@@ -31,6 +31,7 @@ public class HadoopTest {
     public void getConf() throws URISyntaxException, IOException {
         conf = new Configuration();
         conf.set("fs.defaultFS", hdfsUrl);
+        conf.setInt("dfs.blocksize", 1048576);
         URI uri = new URI(hdfsUrl);
         fs = FileSystem.get(uri, conf);
     }

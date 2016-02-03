@@ -33,6 +33,8 @@ public class HDFSUpload {
             throws IOException, URISyntaxException {
         Configuration conf = new Configuration();
         conf.set("fs.defaultFS", hdfsUrl);
+        conf.set("mapred.job.tracker", "node1");
+        conf.set("mapreduce.jobtracker.http.address", "node1:50030");
         DFSClient client = new DFSClient(conf);
         OutputStream out = null;
         InputStream in = null;

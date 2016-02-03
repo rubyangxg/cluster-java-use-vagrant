@@ -1,10 +1,13 @@
 package com.meread.buildenv.test.hadoop;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.junit.Test;
 
+import java.net.URI;
 import java.security.PrivilegedExceptionAction;
 
 /**
@@ -16,6 +19,7 @@ public class LocalTest {
     public void hadoopTest() {
         UserGroupInformation ugi
                 = UserGroupInformation.createRemoteUser("root");
+        final String hdfsPath = "hdfs://node1:9000";
         try {
             ugi.doAs(new PrivilegedExceptionAction<Void>() {
 
@@ -24,13 +28,23 @@ public class LocalTest {
                     Configuration conf = new Configuration();
                     //fs.default.name should match the corresponding value
                     // in your core-site.xml in hadoop cluster
-                    conf.set("fs.default.name", "hdfs://11.11.11.101:9000");
-                    conf.set("hadoop.job.ugi", "root");
+                    conf.set("fs.defaultFS", hdfsPath);
+                    conf.set("hadoop.job.ugi", "hadoop");
                     // in case you are running mapreduce job , need to set
                     // 'mapred.job.tracker' as you did
-                    conf.set("mapred.job.tracker", "11.11.11.101:port");
+                    conf.set("mapred.job.tracker", "node1:50030");
                     // do your code here.
-                    FileSystem hdfs = FileSystem.get(conf);
+                    FileSystem dfs = FileSystem.get(conf);
+                    Path path = new Path("/");
+                    FileSystem fs = FileSystem.get(URI.create(hdfsPath), conf);
+                    FileStatus[] list = fs.listStatus(path);
+                    System.out.println("ls: /");
+                    System.out.println("==========================================================");
+                    for (FileStatus f : list) {
+                        System.out.printf("name: %s, folder: %s, size: %d\n", f.getPath(), f.isDir(), f.getLen());
+                    }
+                    System.out.println("==========================================================");
+                    fs.close();
                     return null;
                 }
             });

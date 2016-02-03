@@ -41,22 +41,28 @@ public class HadoopTest {
     }
 
     @Test
-    public void uploadFromLocal() throws URISyntaxException, IOException {
-        String file = getClass().getClassLoader().getResource("apache.license.txt").getFile();
-        Path localFile = new Path(file);
-        Path destFile = new Path("/apache.license.txt");
-        fs.copyFromLocalFile(false, true, localFile, destFile);
-    }
-
-    @Test
     public void del() throws URISyntaxException, IOException {
-        Path destFile = new Path("/output02");
+        Path destFile = new Path("/test");
         fs.delete(destFile, true);
     }
 
     @Test
+    public void mkdir() throws URISyntaxException, IOException {
+        Path destFile = new Path("/test");
+        fs.mkdirs(destFile);
+    }
+
+    @Test
+    public void uploadFromLocal() throws URISyntaxException, IOException {
+        String file = getClass().getClassLoader().getResource("apache.license.txt").getFile();
+        Path localFile = new Path(file);
+        Path destFile = new Path("/test/apache.license.txt");
+        fs.copyFromLocalFile(false, true, localFile, destFile);
+    }
+
+    @Test
     public void ls() throws URISyntaxException, IOException {
-        Path dir = new Path("/");
+        Path dir = new Path("/test");
 
         FileStatus[] list = fs.listStatus(dir);
         System.out.println("ls: /");
@@ -76,9 +82,9 @@ public class HadoopTest {
         job.setReducerClass(IntSumReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
-        FileInputFormat.addInputPath(job, new Path("/apache.license.txt"));
-        FileOutputFormat.setOutputPath(job, new Path("/output01"));
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+        FileInputFormat.addInputPath(job, new Path("/test/apache.license.txt"));
+        FileOutputFormat.setOutputPath(job, new Path("/test/output01"));
+        job.waitForCompletion(true);
     }
 
 }

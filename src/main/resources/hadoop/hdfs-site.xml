@@ -30,7 +30,7 @@
         <value>file:///usr/hadoop/datanode</value>
     </property>
     <property>
-        <name>dfs.block.size</name>
-        <value>1024000</value>
+        <name>dfs.blocksize</name>
+        <value>1048576</value>
     </property>
 </configuration>

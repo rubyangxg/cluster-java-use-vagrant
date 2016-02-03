@@ -8,7 +8,7 @@ import java.net.URISyntaxException;
 
 public class HDFSUpload {
 
-    private static String hdfsUrl = "hdfs://node1:9000";
+    private static String hdfsUrl = "hdfs://11.11.11.101:9000";
 
     private String sourceFilename;
     private String destinationFilename;

@@ -141,7 +141,7 @@ public class BuildThread {
     }
 
     public void configHostName() throws IOException {
-        for (HostInfo info : otherHostInfo) {
+        for (HostInfo info : BuildEnv.ALL_HOST) {
             expect.sendLine("echo -e '\\n" + info.getIp() + " " + info.getHostName() + "' >> /etc/hosts");
             ready(ROOT_USER);
         }
@@ -340,6 +340,12 @@ public class BuildThread {
         ready(ROOT_USER);
         expect.sendLine("make && make install");
         ready(ROOT_USER);
+        expect.sendLine("yum -y install ruby rubygems");
+        ready(ROOT_USER);
+        expect.sendLine("gem sources --add https://ruby.taobao.org/ --remove https://rubygems.org/");
+        ready(ROOT_USER);
+        expect.sendLine("gem install redis");
+        ready(ROOT_USER);
         //6379
         expect.sendLine("utils/install_server.sh");
         expect.expect(contains("the redis port for this instance"));
@@ -375,17 +381,9 @@ public class BuildThread {
     }
 
     public void configRedisCluster() throws IOException {
-        expect.sendLine("yum -y install ruby rubygems");
-        ready(ROOT_USER);
-        expect.sendLine("gem sources --add https://ruby.taobao.org/ --remove https://rubygems.org/");
-        ready(ROOT_USER);
-        expect.sendLine("gem install redis");
-        ready(ROOT_USER);
         expect.sendLine("\\cp -f /vagrant/src/main/resources/redis/6379.conf /etc/redis/6379.conf");
         ready(ROOT_USER);
         expect.sendLine("\\cp -f /vagrant/src/main/resources/redis/6380.conf /etc/redis/6380.conf");
-        ready(ROOT_USER);
-        expect.sendLine("gem install redis");
         ready(ROOT_USER);
         expect.sendLine("service redis_6379 restart && service redis_6380 restart");
         ready(ROOT_USER);
@@ -529,7 +527,7 @@ public class BuildThread {
         expect.sendLine("su " + HADOOP_USER);
         ready(HADOOP_USER);
         configSSH(HADOOP_USER);
-        expect.sendLine("tar zxf /vagrant/download/hadoop-2.6.2.tar.gz -C /usr/hadoop --strip-components 1 ");
+        expect.sendLine("tar zxf /vagrant/download/hadoop-2.6.3.tar.gz -C /usr/hadoop --strip-components 1 ");
         ready(HADOOP_USER);
         expect.sendLine("echo -e ' ' >> ~/.bash_profile");
         ready(HADOOP_USER);
@@ -607,7 +605,7 @@ public class BuildThread {
         ready(HADOOP_USER);
         expect.sendLine("~/bin/hdfs dfs -cat /test/NOTICE.txt");
         ready(HADOOP_USER);
-        expect.sendLine("~/bin/hadoop jar ~/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.2.jar wordcount /test/NOTICE.txt /output01");
+        expect.sendLine("~/bin/hadoop jar ~/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.3.jar wordcount /test/NOTICE.txt /output01");
         ready(HADOOP_USER);
         expect.sendLine("~/bin/hdfs dfs -ls /output01");
         ready(HADOOP_USER);

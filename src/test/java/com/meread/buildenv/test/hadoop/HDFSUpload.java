@@ -31,34 +31,6 @@ public class HDFSUpload {
 
     public void uploadFile()
             throws IOException, URISyntaxException {
-        Configuration conf = new Configuration();
-        conf.set("fs.defaultFS", hdfsUrl);
-        conf.set("mapred.job.tracker", "node1");
-        conf.set("mapreduce.jobtracker.http.address", "node1:50030");
-        DFSClient client = new DFSClient(conf);
-        OutputStream out = null;
-        InputStream in = null;
-        try {
-            if (client.exists(destinationFilename)) {
-                System.out.println("File already exists in hdfs: " + destinationFilename);
-                return;
-            }
-            out = new BufferedOutputStream(client.create(destinationFilename, false));
-            in = new BufferedInputStream(new FileInputStream(sourceFilename));
-            byte[] buffer = new byte[1024];
 
-            int len = 0;
-            while ((len = in.read(buffer)) > 0) {
-                out.write(buffer, 0, len);
-            }
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-            if (out != null) {
-                out.close();
-            }
-            client.close();
-        }
     }
 }

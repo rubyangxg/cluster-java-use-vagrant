@@ -4,16 +4,13 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "node1" do |node|
     node.vm.box = "origin"
-    node.vm.box_url = "http://www.meread.com/share/centos7_base.box"
+    node.vm.box_url = "http://www.meread.com/share/virtualbox-centos7.box"
     node.vm.provider "virtualbox" do |v|
       v.name = "node1"
       v.customize ["modifyvm", :id, "--memory", "1536"]
     end
     node.vm.network :private_network, ip: "11.11.11.101"
     node.vm.hostname = "node1"
-    node.vm.network "forwarded_port", guest: 50070, host: 50070
-    node.vm.network "forwarded_port", guest: 8088, host: 8088
-    node.vm.network "forwarded_port", guest: 80, host: 8081
     node.vm.provision "shell", inline: <<-SHELL
       /etc/rc.d/init.d/mysql bootstrap
     SHELL
@@ -21,7 +18,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   (2..3).each do |i|
     config.vm.define "node#{i}" do |node|
       node.vm.box = "origin"
-      node.vm.box_url = "http://www.meread.com/share/centos7_base.box"
+      node.vm.box_url = "http://www.meread.com/share/virtualbox-centos7.box"
       node.vm.provider "virtualbox" do |v|
         v.name = "node#{i}"
         v.customize ["modifyvm", :id, "--memory", "1536"]

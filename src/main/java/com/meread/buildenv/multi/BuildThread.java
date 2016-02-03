@@ -141,8 +141,10 @@ public class BuildThread {
     }
 
     public void configHostName() throws IOException {
+        expect.sendLine("echo '' > /etc/hosts");
+        ready(ROOT_USER);
         for (HostInfo info : BuildEnv.ALL_HOST) {
-            expect.sendLine("echo -e '\\n" + info.getIp() + " " + info.getHostName() + "' >> /etc/hosts");
+            expect.sendLine("echo '" + info.getIp() + " " + info.getHostName() + "' >> /etc/hosts");
             ready(ROOT_USER);
         }
     }

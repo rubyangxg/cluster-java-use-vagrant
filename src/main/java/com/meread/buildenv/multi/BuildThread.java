@@ -49,7 +49,7 @@ public class BuildThread {
 
     private static final String ROOT_USER = "root";
 
-    private static final String HADOOP_USER = "hadoop";
+    private static final String HADOOP_USER = "hdp";
 
     public BuildThread(HostInfo hostInfo) {
         this.hostInfo = hostInfo;
@@ -70,25 +70,24 @@ public class BuildThread {
 //            ready(ROOT_USER);
 //            expect.sendLine("rpm -ivh jdk-7u79-linux-x64.rpm");
 //            ready(ROOT_USER);
+        expect.sendLine("tar xvzf /vagrant/download/scala-2.11.7.tgz");
         ready(ROOT_USER);
-        expect.sendLine("java -version");
+        expect.sendLine("mv scala-2.11.7 /usr/local/scala");
         ready(ROOT_USER);
-        expect.sendLine("echo $JAVA_HOME");
-        MultiResult hasJavaHome = expect.expect(anyOf(contains("jdk1.7.0_79"), contains(ROOT_USER + "@" + hostInfo.getHostName())));
-        if (hasJavaHome.getResults().get(1).isSuccessful()) {
-            expect.sendLine("echo -e 'JAVA_HOME=/usr/java/jdk1.7.0_79' >> /etc/profile");
-            ready(ROOT_USER);
-            expect.sendLine("echo -e 'JRE_HOME=$JAVA_HOME/jre' >> /etc/profile");
-            ready(ROOT_USER);
-            expect.sendLine("echo -e 'PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin' >> /etc/profile");
-            ready(ROOT_USER);
-            expect.sendLine("echo -e 'CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/lib' >> /etc/profile");
-            ready(ROOT_USER);
-            expect.sendLine("echo -e 'export JAVA_HOME JRE_HOME PATH CLASSPATH' >> /etc/profile");
-            ready(ROOT_USER);
-            expect.sendLine("source /etc/profile");
-            ready(ROOT_USER);
-        }
+        expect.sendLine("echo -e 'SCALA_HOME=/usr/local/scala' >> /etc/profile");
+        ready(ROOT_USER);
+        expect.sendLine("echo -e 'JAVA_HOME=/usr/java/jdk1.7.0_79' >> /etc/profile");
+        ready(ROOT_USER);
+        expect.sendLine("echo -e 'JRE_HOME=$JAVA_HOME/jre' >> /etc/profile");
+        ready(ROOT_USER);
+        expect.sendLine("echo -e 'PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin:$SCALA_HOME/bin' >> /etc/profile");
+        ready(ROOT_USER);
+        expect.sendLine("echo -e 'CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/lib' >> /etc/profile");
+        ready(ROOT_USER);
+        expect.sendLine("echo -e 'export SCALA_HOME JAVA_HOME JRE_HOME PATH CLASSPATH' >> /etc/profile");
+        ready(ROOT_USER);
+        expect.sendLine("source /etc/profile");
+        ready(ROOT_USER);
         System.out.println("~~~~~~~~~~~~~安装jdk  end~~~~~~~~~~~~~~");
     }
 
@@ -511,7 +510,7 @@ public class BuildThread {
     }
 
     public void createHadoopUser() throws IOException {
-        expect.sendLine("useradd -d /usr/hadoop " + HADOOP_USER + " && chmod -R 755 /usr/hadoop");
+        expect.sendLine("useradd -d /usr/hdp " + HADOOP_USER + " && chmod -R 755 /usr/hdp");
         ready(ROOT_USER);
         expect.sendLine("passwd " + HADOOP_USER);
         expect.expect(contains("New password"));
@@ -519,7 +518,7 @@ public class BuildThread {
         expect.expect(contains("Retype"));
         expect.sendLine("vagrant");
         ready(ROOT_USER);
-        expect.sendLine("chmod 755 /usr/hadoop/.bash_profile");
+        expect.sendLine("chmod 755 /usr/hdp/.bash_profile");
         ready(ROOT_USER);
         expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/sysctl.conf /etc/sysctl.conf");
         ready(ROOT_USER);
@@ -529,11 +528,13 @@ public class BuildThread {
         expect.sendLine("su " + HADOOP_USER);
         ready(HADOOP_USER);
         configSSH(HADOOP_USER);
-        expect.sendLine("tar zxf /vagrant/download/hadoop-2.6.3.tar.gz -C /usr/hadoop --strip-components 1 ");
+        expect.sendLine("mkdir hadoop spark");
+        ready(HADOOP_USER);
+        expect.sendLine("tar zxf /vagrant/download/hadoop-2.6.3.tar.gz -C ~/hadoop --strip-components 1 ");
         ready(HADOOP_USER);
         expect.sendLine("echo -e ' ' >> ~/.bash_profile");
         ready(HADOOP_USER);
-        expect.sendLine("echo -e 'export HADOOP_HOME=/usr/hadoop' >> ~/.bash_profile");
+        expect.sendLine("echo -e 'export HADOOP_HOME=/usr/hdp/hadoop' >> ~/.bash_profile");
         ready(HADOOP_USER);
         expect.sendLine("echo -e 'export HADOOP_COMMON_HOME=$HADOOP_HOME' >> ~/.bash_profile");
         ready(HADOOP_USER);
@@ -547,7 +548,12 @@ public class BuildThread {
         ready(HADOOP_USER);
         expect.sendLine("echo -e 'export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native' >> ~/.bash_profile");
         ready(HADOOP_USER);
-        expect.sendLine("echo -e 'export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin ' >> ~/.bash_profile");
+        expect.sendLine("tar -zxf /vagrant/download/spark-1.5.2-bin-hadoop2.6.tgz -C ~/spark --strip-components 1");
+        ready(HADOOP_USER);
+        expect.sendLine("echo 'export SPARK_HOME=/usr/hdp/spark' >> ~/.bash_profile");
+        ready(HADOOP_USER);
+
+        expect.sendLine("echo -e 'export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin:$SPARK_HOME/bin' >> ~/.bash_profile");
         ready(HADOOP_USER);
         expect.sendLine("source ~/.bash_profile");
         ready(HADOOP_USER);
@@ -558,60 +564,70 @@ public class BuildThread {
         ready(HADOOP_USER);
         expect.sendLine("ssh node2 \"mkdir ~/datanode\" && ssh node3 \"mkdir ~/datanode\"");
         ready(HADOOP_USER);
-        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/hdfs-site.xml ~/etc/hadoop/hdfs-site.xml");
+        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/hdfs-site.xml ~/hadoop/etc/hadoop/hdfs-site.xml");
         ready(HADOOP_USER);
-        expect.sendLine("scp ~/etc/hadoop/hdfs-site.xml node2:~/etc/hadoop/");
+        expect.sendLine("scp ~/hadoop/etc/hadoop/hdfs-site.xml node2:~/hadoop/etc/hadoop/");
         ready(HADOOP_USER);
-        expect.sendLine("scp ~/etc/hadoop/hdfs-site.xml node3:~/etc/hadoop/");
-        ready(HADOOP_USER);
-
-        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/core-site.xml ~/etc/hadoop/core-site.xml");
-        ready(HADOOP_USER);
-        expect.sendLine("scp ~/etc/hadoop/core-site.xml node2:~/etc/hadoop/");
-        ready(HADOOP_USER);
-        expect.sendLine("scp ~/etc/hadoop/core-site.xml node3:~/etc/hadoop/");
+        expect.sendLine("scp ~/hadoop/etc/hadoop/hdfs-site.xml node3:~/hadoop/etc/hadoop/");
         ready(HADOOP_USER);
 
-        expect.sendLine("sed -i -e 's/\\${JAVA_HOME}/\\/usr\\/java\\/default/' ~/etc/hadoop/hadoop-env.sh");
+        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/core-site.xml ~/hadoop/etc/hadoop/core-site.xml");
         ready(HADOOP_USER);
-        expect.sendLine("scp ~/etc/hadoop/hadoop-env.sh node2:~/etc/hadoop/");
+        expect.sendLine("scp ~/hadoop/etc/hadoop/core-site.xml node2:~/hadoop/etc/hadoop/");
         ready(HADOOP_USER);
-        expect.sendLine("scp ~/etc/hadoop/hadoop-env.sh node3:~/etc/hadoop/");
+        expect.sendLine("scp ~/hadoop/etc/hadoop/core-site.xml node3:~/hadoop/etc/hadoop/");
+        ready(HADOOP_USER);
+
+        expect.sendLine("sed -i -e 's/\\${JAVA_HOME}/\\/usr\\/java\\/default/' ~/hadoop/etc/hadoop/hadoop-env.sh");
+        ready(HADOOP_USER);
+        expect.sendLine("scp ~/hadoop/etc/hadoop/hadoop-env.sh node2:~/hadoop/etc/hadoop/");
+        ready(HADOOP_USER);
+        expect.sendLine("scp ~/hadoop/etc/hadoop/hadoop-env.sh node3:~/hadoop/etc/hadoop/");
         ready(HADOOP_USER);
 
         expect.sendLine("mkdir ~/namenode");
         ready(HADOOP_USER);
-        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/hdfs-site-master.xml ~/etc/hadoop/hdfs-site.xml");
+        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/hdfs-site-master.xml ~/hadoop/etc/hadoop/hdfs-site.xml");
         ready(HADOOP_USER);
-        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/mapred-site.xml ~/etc/hadoop/mapred-site.xml");
+        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/mapred-site.xml ~/hadoop/etc/hadoop/mapred-site.xml");
         ready(HADOOP_USER);
-        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/yarn-site.xml ~/etc/hadoop/yarn-site.xml");
+        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/yarn-site.xml ~/hadoop/etc/hadoop/yarn-site.xml");
         ready(HADOOP_USER);
-        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/slaves ~/etc/hadoop/slaves");
+        expect.sendLine("\\cp -f /vagrant/src/main/resources/hadoop/slaves ~/hadoop/etc/hadoop/slaves");
         ready(HADOOP_USER);
     }
 
     public void startHadoop() throws IOException {
-        expect.sendLine("~/bin/hdfs namenode -format");
+        expect.sendLine("~/hadoop/bin/hdfs namenode -format");
         ready(HADOOP_USER);
-        expect.sendLine("~/sbin/start-dfs.sh");
+        expect.sendLine("~/hadoop/sbin/start-dfs.sh");
         ready(HADOOP_USER);
-        expect.sendLine("~/sbin/start-yarn.sh");
+        expect.sendLine("~/hadoop/sbin/start-yarn.sh");
         ready(HADOOP_USER);
         expect.sendLine("jps");
         ready(HADOOP_USER);
 
-        expect.sendLine("~/bin/hdfs dfs -mkdir /test");
+        expect.sendLine("~/hadoop/bin/hdfs dfs -mkdir /test");
         ready(HADOOP_USER);
-        expect.sendLine("~/bin/hdfs dfs -copyFromLocal ~/NOTICE.txt /test");
+        expect.sendLine("~/hadoop/bin/hdfs dfs -copyFromLocal ~/NOTICE.txt /test");
         ready(HADOOP_USER);
-        expect.sendLine("~/bin/hdfs dfs -cat /test/NOTICE.txt");
+        expect.sendLine("~/hadoop/bin/hdfs dfs -cat /test/NOTICE.txt");
         ready(HADOOP_USER);
-        expect.sendLine("~/bin/hadoop jar ~/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.3.jar wordcount /test/NOTICE.txt /output01");
+        expect.sendLine("~/hadoop/bin/hadoop jar ~/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.3.jar wordcount /test/NOTICE.txt /output01");
         ready(HADOOP_USER);
-        expect.sendLine("~/bin/hdfs dfs -ls /output01");
+        expect.sendLine("~/hadoop/bin/hdfs dfs -ls /output01");
         ready(HADOOP_USER);
-        expect.sendLine("~/bin/hdfs dfs -cat /output01/part-r-00000");
+        expect.sendLine("~/hadoop/bin/hdfs dfs -cat /output01/part-r-00000");
+        ready(HADOOP_USER);
+    }
+
+
+    public void configSpark() throws IOException {
+        expect.sendLine("\\cp -f /vagrant/src/main/resources/spark/spark-env.sh ~/spark/conf/spark-env.sh");
+        ready(HADOOP_USER);
+        expect.sendLine("chmod 755 ~/spark/conf/spark-env.sh");
+        ready(HADOOP_USER);
+        expect.sendLine("\\cp -f /vagrant/src/main/resources/spark/slaves ~/spark/conf/slaves");
         ready(HADOOP_USER);
     }
 

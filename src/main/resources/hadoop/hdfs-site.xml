@@ -27,7 +27,7 @@
     </property>
     <property>
         <name>dfs.datanode.data.dir</name>
-        <value>file:///usr/hadoop/datanode</value>
+        <value>file:///usr/hdp/hadoop/datanode</value>
     </property>
     <property>
         <name>dfs.blocksize</name>

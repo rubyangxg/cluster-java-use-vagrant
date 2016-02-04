@@ -163,8 +163,6 @@ public class BuildThread {
         ready(user);
         this.expect.sendLine("\\cp -f /vagrant/src/main/resources/ssh/config ~/.ssh");
         ready(user);
-        this.expect.sendLine("\\cp -f /vagrant/src/main/resources/ssh/ssh-copy-id.modified /usr/bin/ssh-copy-id");
-        ready(user);
         for (HostInfo hi : otherHostInfo) {
             String copyId = "ssh-copy-id -i ~/.ssh/id_rsa.pub " + user + "@" + hi.getHostName();
             this.expect.sendLine(copyId);
@@ -197,8 +195,9 @@ public class BuildThread {
         ready(ROOT_USER);
         expect.sendLine("setenforce 0");
         ready(ROOT_USER);
-//        sed -i -e 's/^SELINUX=.*/SELINUX=permissive/' /etc/selinux/config
         expect.sendLine("sed -i -e 's/^SELINUX=.*/SELINUX=disabled/' /etc/sysconfig/selinux");
+        ready(ROOT_USER);
+        this.expect.sendLine("\\cp -f /vagrant/src/main/resources/ssh/ssh-copy-id.modified /usr/bin/ssh-copy-id");
         ready(ROOT_USER);
     }
 
@@ -528,6 +527,8 @@ public class BuildThread {
         expect.sendLine("su " + HADOOP_USER);
         ready(HADOOP_USER);
         configSSH(HADOOP_USER);
+        expect.sendLine("cd ~");
+        ready(HADOOP_USER);
         expect.sendLine("mkdir hadoop spark");
         ready(HADOOP_USER);
         expect.sendLine("tar zxf /vagrant/download/hadoop-2.6.3.tar.gz -C ~/hadoop --strip-components 1 ");
@@ -609,7 +610,7 @@ public class BuildThread {
 
         expect.sendLine("~/hadoop/bin/hdfs dfs -mkdir /test");
         ready(HADOOP_USER);
-        expect.sendLine("~/hadoop/bin/hdfs dfs -copyFromLocal ~/NOTICE.txt /test");
+        expect.sendLine("~/hadoop/bin/hdfs dfs -copyFromLocal ~/hadoop/NOTICE.txt /test");
         ready(HADOOP_USER);
         expect.sendLine("~/hadoop/bin/hdfs dfs -cat /test/NOTICE.txt");
         ready(HADOOP_USER);

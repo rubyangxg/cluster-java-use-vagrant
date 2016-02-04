@@ -54,5 +54,4 @@
 export JAVA_HOME=/usr/java/default
 export SCALA_HOME=/usr/local/scala
 export SPARK_MASTER_IP=11.11.11.101     #集群master的ip
-export SPARK_WORKER_MEMORY=1g                #worker几点分配给excutors的最大内存，因为三台机器都是2G
 export HADOOP_CONF_DIR=/usr/hdp/hadoop/etc/hadoop     #hadoop集群的配置文件的目录

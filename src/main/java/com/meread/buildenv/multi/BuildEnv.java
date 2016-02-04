@@ -171,6 +171,8 @@ public class BuildEnv {
             bt.configMongoAutorun();
         }
 
+//        restoreSnapShots();
+
         for (int i = threadList.size() - 2; i >= 0; i--) {
             final BuildThread bt = threadList.get(i);
             bt.createHadoopUser();
@@ -178,6 +180,10 @@ public class BuildEnv {
         for (int i = threadList.size() - 2; i >= 0; i--) {
             final BuildThread bt = threadList.get(i);
             bt.copyHadoopConfig();
+        }
+        for (int i = threadList.size() - 2; i >= 0; i--) {
+            final BuildThread bt = threadList.get(i);
+            bt.configSpark();
         }
         threadList.get(0).configHadoop();
         threadList.get(0).startHadoop();

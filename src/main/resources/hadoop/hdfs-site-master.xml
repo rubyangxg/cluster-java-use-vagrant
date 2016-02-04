@@ -23,11 +23,11 @@
     </property>
     <property>
         <name>dfs.datanode.data.dir</name>
-        <value>file:///usr/hadoop/datanode</value>
+        <value>file:///usr/hdp/hadoop/datanode</value>
     </property>
     <property>
         <name>dfs.namenode.name.dir</name>
-        <value>file:///usr/hadoop/namenode</value>
+        <value>file:///usr/hdp/hadoop/namenode</value>
     </property>
     <property>
         <name>dfs.permissions</name>

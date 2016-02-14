@@ -1,6 +1,6 @@
-package com.meread.buildenv.multi;
+package com.meread.buildenv;
 
-import com.meread.buildenv.HostInfo;
+import com.meread.buildenv.multi.BuildThread;
 
 import java.io.BufferedReader;
 import java.io.IOException;

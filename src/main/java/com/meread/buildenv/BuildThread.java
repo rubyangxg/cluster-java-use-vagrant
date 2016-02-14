@@ -1,10 +1,9 @@
-package com.meread.buildenv.multi;
+package com.meread.buildenv;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.meread.buildenv.HostInfo;
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.Template;

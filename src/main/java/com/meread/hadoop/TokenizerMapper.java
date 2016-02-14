@@ -1,4 +1,4 @@
-package com.meread.buildenv.test.hadoop;
+package com.meread.hadoop;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;

@@ -1,6 +1,5 @@
 package com.meread.buildenv;
 
-import com.meread.buildenv.multi.BuildThread;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;

@@ -1,6 +1,6 @@
 package com.meread.buildenv.test.hadoop;
 
-import com.meread.buildenv.hadoop.IntSumReducer;
+import com.meread.hadoop.IntSumReducer;
 import com.meread.hadoop.TokenizerMapper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;

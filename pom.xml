@@ -179,9 +179,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <mainClass>com.meread.buildenv.HelloWorld</mainClass>
-                </configuration>
             </plugin>
 
         </plugins>

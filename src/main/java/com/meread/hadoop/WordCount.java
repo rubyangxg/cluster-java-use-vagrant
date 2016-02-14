@@ -10,8 +10,13 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 public class WordCount {
+
+    private static final String hdfsUrl = "hdfs://node1:9000";
+
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
+        conf.set("fs.defaultFS", hdfsUrl);
+        conf.setInt("dfs.blocksize", 1048576);
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
         if (otherArgs.length != 2) {
             System.err.println("Usage: wordcount <in> <out>");

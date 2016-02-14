@@ -45,7 +45,7 @@ public class HadoopTest {
 
     @Test
     public void del() throws URISyntaxException, IOException {
-        Path destFile = new Path("/output01");
+        Path destFile = new Path("/test/output01");
         fs.delete(destFile, true);
     }
 

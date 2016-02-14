@@ -63,7 +63,7 @@ public class BuildThread {
     }
 
     public void configJava() throws IOException {
-        System.out.println("~~~~~~~~~~~~~安装jdk  start~~~~~~~~~~~~~~");
+        System.out.println("~~~~~~~~~~~~~安装jdk/scala/maven  start~~~~~~~~~~~~~~");
 //        expect.sendLine("java -version");
 //            expect.sendLine("wget --no-check-certificate --no-cookies --header \"Cookie: oraclelicense=accept-securebackup-cookie\" http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.rpm");
 //            ready(ROOT_USER);
@@ -73,13 +73,21 @@ public class BuildThread {
         ready(ROOT_USER);
         expect.sendLine("mv scala-2.11.7 /usr/local/scala");
         ready(ROOT_USER);
+
+        expect.sendLine("tar xvzf /vagrant/download/apache-maven-3.3.9-bin.tar.gz");
+        ready(ROOT_USER);
+        expect.sendLine("mv apache-maven-3.3.9 /usr/local/maven");
+        ready(ROOT_USER);
+
         expect.sendLine("echo -e 'SCALA_HOME=/usr/local/scala' >> /etc/profile");
+        ready(ROOT_USER);
+        expect.sendLine("echo -e 'MAVEN_HOME=/usr/local/maven' >> /etc/profile");
         ready(ROOT_USER);
         expect.sendLine("echo -e 'JAVA_HOME=/usr/java/jdk1.7.0_79' >> /etc/profile");
         ready(ROOT_USER);
         expect.sendLine("echo -e 'JRE_HOME=$JAVA_HOME/jre' >> /etc/profile");
         ready(ROOT_USER);
-        expect.sendLine("echo -e 'PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin:$SCALA_HOME/bin' >> /etc/profile");
+        expect.sendLine("echo -e 'PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin:$SCALA_HOME/bin:$MAVEN_HOME/bin' >> /etc/profile");
         ready(ROOT_USER);
         expect.sendLine("echo -e 'CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/lib' >> /etc/profile");
         ready(ROOT_USER);
@@ -180,7 +188,7 @@ public class BuildThread {
     public void installRequired() throws IOException {
         expect.sendLine("yum -y update");
         ready(ROOT_USER);
-        expect.sendLine("yum -y install nano vim lsof gcc prelink expect openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel gcc-c++ automake autoconf");
+        expect.sendLine("yum -y install git nano vim lsof gcc prelink expect openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel gcc-c++ automake autoconf");
         ready(ROOT_USER);
         expect.sendLine("yum -y install perl-Compress-Raw-Bzip2 perl-Compress-Raw-Zlib perl-DBI perl-IO-Compress perl-Net-Daemon perl-PlRPC nmap nmap-ncat");
         ready(ROOT_USER);

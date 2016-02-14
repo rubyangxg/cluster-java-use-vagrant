@@ -51,7 +51,7 @@
 # - SPARK_IDENT_STRING  A string representing this instance of spark. (Default: $USER)
 # - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
 
-export JAVA_HOME=/usr/java/default
 export SCALA_HOME=/usr/local/scala
+export JAVA_HOME=/usr/java/default
 export SPARK_MASTER_IP=11.11.11.101     #集群master的ip
 export HADOOP_CONF_DIR=/usr/hdp/hadoop/etc/hadoop     #hadoop集群的配置文件的目录

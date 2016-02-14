@@ -43,7 +43,7 @@ public class HadoopTest {
 
     @Test
     public void del() throws URISyntaxException, IOException {
-        Path destFile = new Path("/test");
+        Path destFile = new Path("/output01");
         fs.delete(destFile, true);
     }
 
@@ -55,9 +55,9 @@ public class HadoopTest {
 
     @Test
     public void uploadFromLocal() throws URISyntaxException, IOException {
-        String file = getClass().getClassLoader().getResource("apache.license.txt").getFile();
+        String file = getClass().getClassLoader().getResource("hadoop_test.txt").getFile();
         Path localFile = new Path(file);
-        Path destFile = new Path("/test/apache.license.txt");
+        Path destFile = new Path("/test/hadoop_test.txt");
         fs.copyFromLocalFile(false, true, localFile, destFile);
     }
 
@@ -77,15 +77,17 @@ public class HadoopTest {
     @Test
     public void wordCount() throws URISyntaxException, IOException, ClassNotFoundException, InterruptedException {
         Job job = Job.getInstance(conf, "wordcount");
-        job.setJarByClass(WordCount.class);
         job.setMapperClass(TokenizerMapper.class);
         job.setCombinerClass(IntSumReducer.class);
         job.setReducerClass(IntSumReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
-        FileInputFormat.addInputPath(job, new Path("/test/apache.license.txt"));
+        Path destFile = new Path("/test/output01");
+        fs.delete(destFile, true);
+        FileInputFormat.addInputPath(job, new Path("/test/hadoop_test.txt"));
         FileOutputFormat.setOutputPath(job, new Path("/test/output01"));
         job.waitForCompletion(true);
     }
+
 
 }

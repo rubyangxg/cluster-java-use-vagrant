@@ -1,4 +1,4 @@
-package com.meread.buildenv.test;
+package com.meread.buildenv.test.downsong;
 
 import org.apache.commons.io.FileUtils;
 

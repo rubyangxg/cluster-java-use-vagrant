@@ -25,6 +25,7 @@ public class MorphiaTest {
 
     MongoClient localMongos;
     MongoClient serverMongos;
+    Datastore datastore;
 
     @Before
     public void initMongoClient() {
@@ -33,6 +34,11 @@ public class MorphiaTest {
         localMongos = new MongoClient(Arrays.asList(new ServerAddress("11.11.11.101", 30000),
                 new ServerAddress("11.11.11.102", 30000), new ServerAddress("11.11.11.103", 30000)), mcops);
         serverMongos = new MongoClient("10.13.23.61", 27017);
+
+        final Morphia morphia = new Morphia();
+        morphia.mapPackage("com.meread.buildenv");
+        datastore = morphia.createDatastore(localMongos, "mydb");
+        datastore.ensureIndexes();
     }
 
     @Test
@@ -55,18 +61,17 @@ public class MorphiaTest {
         }
     }
 
-
+    @Test
+    public void query() {
+        List<Employee> all = datastore.createQuery(Employee.class).asList();
+        for (Employee employee : all) {
+            System.out.println(employee);
+        }
+    }
 
     @Test
     public void helloWorld() {
-        final Morphia morphia = new Morphia();
-// tell Morphia where to find your classes
-// can be called multiple times with different packages or classes
-        morphia.mapPackage("com.meread.buildenv");
 
-// create the Datastore connecting to the default port on the local host
-        final Datastore datastore = morphia.createDatastore(localMongos, "mydb");
-        datastore.ensureIndexes();
 
         MongoClient mongo = datastore.getMongo();
         String host = mongo.getAddress().getHost();
@@ -119,10 +124,7 @@ public class MorphiaTest {
                 .filter("salary >", 100000);
         datastore.delete(overPaidQuery);
 
-        List<Employee> all = datastore.createQuery(Employee.class).asList();
-        for (Employee employee : all) {
-            System.out.println(employee);
-        }
+
     }
 }
 

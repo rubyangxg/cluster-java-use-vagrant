@@ -51,7 +51,6 @@ public class WordCount {
         JavaPairRDD<String, Integer> pairs = words.mapToPair(WORDS_MAPPER);
         JavaPairRDD<String, Integer> counter = pairs.reduceByKey(WORDS_REDUCER);
 
-        counter.coalesce(1);
-        counter.saveAsTextFile("hdfs://node1:9000/test/spark_output");
+        counter.coalesce(1).saveAsTextFile("hdfs://node1:9000/test/spark_output");;
     }
 }

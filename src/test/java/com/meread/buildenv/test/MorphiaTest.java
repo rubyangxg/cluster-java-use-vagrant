@@ -72,10 +72,6 @@ public class MorphiaTest {
     @Test
     public void helloWorld() {
 
-
-        MongoClient mongo = datastore.getMongo();
-        String host = mongo.getAddress().getHost();
-
         datastore.delete(datastore.createQuery(Employee.class));
 
         final Employee ca = new Employee("我擦1", 50000.0);

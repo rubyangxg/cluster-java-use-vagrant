@@ -72,11 +72,11 @@ public final class KuGouApi {
     private static final MongoClientOptions mcops = new MongoClientOptions.Builder().connectionsPerHost(50).build();
 
     int total = 0;
-    int remain = 0;
+    int complete = 0;
 
     public void fetchSingers() {
 
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+        ExecutorService executor = Executors.newFixedThreadPool(30);
         for (final String key : SINGER_CATEGORY.keySet()) {
             try {
                 String url = SINGER_CATEGORY.get(key);
@@ -93,7 +93,6 @@ public final class KuGouApi {
                             public void run() {
                                 try {
                                     total += singers.size();
-                                    remain += singers.size();
                                     LOGGER.info("total {}", total);
                                     processSubData(singers, key);
                                 } catch (Exception e) {
@@ -130,7 +129,7 @@ public final class KuGouApi {
             si.setSongCount(songcount);
             si.setUpdateTime(new Date());
             saveOrUpdateSinger(si);
-            LOGGER.info("总数: {} , 剩余: {}", total, --remain);
+            LOGGER.info("总数: {} , 已完成: {}", total, ++complete);
         }
     }
 

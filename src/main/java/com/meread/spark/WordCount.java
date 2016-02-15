@@ -9,7 +9,6 @@ import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
 
-import java.io.File;
 import java.util.Arrays;
 
 public class WordCount {
@@ -38,15 +37,21 @@ public class WordCount {
             };
 
     public static void main(String[] args) {
-        SparkConf conf = new SparkConf().setAppName("com.meread.spark.WordCount").setMaster("spark://11.11.11.101:7077");
-        JavaSparkContext context = new JavaSparkContext("spark://11.11.11.101:7077","WordCount");
 
-        String path = WordCount.class.getClass().getClassLoader().getResource("hadoop_test.txt").getFile();
-        JavaRDD<String> file = context.textFile(path);
+        SparkConf conf = new SparkConf()
+                .setAppName("WordCount")
+                .setMaster("spark://11.11.11.101:7077")
+                .set("spark.executor.memory", "1g")
+                .setJars(new String[]{"/Users/yangxg/cluster-java-use-vagrant/target/vagrant-cluster-env-1.0.0-SNAPSHOT.jar"});
+
+
+        JavaSparkContext context = new JavaSparkContext(conf);
+
+        JavaRDD<String> file = context.textFile("hdfs://node1:9000/test/hadoop_test.txt").cache();
         JavaRDD<String> words = file.flatMap(WORDS_EXTRACTOR);
         JavaPairRDD<String, Integer> pairs = words.mapToPair(WORDS_MAPPER);
         JavaPairRDD<String, Integer> counter = pairs.reduceByKey(WORDS_REDUCER);
 
-        counter.saveAsTextFile(new File(path).getParent() + "/result.txt");
+        counter.saveAsTextFile("hdfs://node1:9000/test/hadoop_test_result");
     }
 }

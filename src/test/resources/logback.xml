@@ -49,7 +49,7 @@
         <appender-ref ref="CONSOLE-APPENDER"/>
     </logger>
 
-    <logger name="org.apache.http.wire" additivity="false" level="warn">
+    <logger name="org.apache.http" additivity="false" level="warn">
         <appender-ref ref="CONSOLE-APPENDER"/>
     </logger>
 

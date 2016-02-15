@@ -9,6 +9,8 @@ import com.mongodb.ServerAddress;
 import org.apache.http.client.fluent.Request;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -18,6 +20,8 @@ import java.util.concurrent.Executors;
  * Created by yangxg on 16/2/15.
  */
 public final class KuGouApi {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(KuGouApi.class);
 
     private static class LazyHolder {
         private static final KuGouApi INSTANCE = new KuGouApi();
@@ -67,13 +71,17 @@ public final class KuGouApi {
 
     private static final MongoClientOptions mcops = new MongoClientOptions.Builder().connectionsPerHost(50).build();
 
+    int total = 0;
+    int remain = 0;
+
     public void fetchSingers() {
+
         ExecutorService executor = Executors.newFixedThreadPool(10);
         for (final String key : SINGER_CATEGORY.keySet()) {
             try {
                 String url = SINGER_CATEGORY.get(key);
                 String response = Request.Get(url).execute().returnContent().asString();
-                Map<String, Object> singerListData = om.readValue(response, Map.class);
+                final Map<String, Object> singerListData = om.readValue(response, Map.class);
                 if (singerListData.get("status").equals(1)) {
                     Map<String, Object> stemp = (Map<String, Object>) singerListData.get("data");
                     List<Map<String, Object>> singerListMap = (List<Map<String, Object>>) stemp.get("info");
@@ -84,6 +92,9 @@ public final class KuGouApi {
                             @Override
                             public void run() {
                                 try {
+                                    total += singers.size();
+                                    remain += singers.size();
+                                    LOGGER.info("total {}", total);
                                     processSubData(singers, key);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -119,6 +130,7 @@ public final class KuGouApi {
             si.setSongCount(songcount);
             si.setUpdateTime(new Date());
             saveOrUpdateSinger(si);
+            LOGGER.info("总数: {} , 剩余: {}", total, --remain);
         }
     }
 

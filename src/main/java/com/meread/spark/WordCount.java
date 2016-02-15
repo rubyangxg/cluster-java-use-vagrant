@@ -9,6 +9,7 @@ import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
 
+import java.io.File;
 import java.util.Arrays;
 
 public class WordCount {
@@ -37,19 +38,15 @@ public class WordCount {
             };
 
     public static void main(String[] args) {
-        if (args.length < 1) {
-            System.err.println("Please provide the input file full path as argument");
-            System.exit(0);
-        }
+        SparkConf conf = new SparkConf().setAppName("com.meread.spark.WordCount").setMaster("spark://11.11.11.101:7077");
+        JavaSparkContext context = new JavaSparkContext("spark://11.11.11.101:7077","WordCount");
 
-        SparkConf conf = new SparkConf().setAppName("org.sparkexample.WordCount").setMaster("local");
-        JavaSparkContext context = new JavaSparkContext(conf);
-
-        JavaRDD<String> file = context.textFile(args[0]);
+        String path = WordCount.class.getClass().getClassLoader().getResource("hadoop_test.txt").getFile();
+        JavaRDD<String> file = context.textFile(path);
         JavaRDD<String> words = file.flatMap(WORDS_EXTRACTOR);
         JavaPairRDD<String, Integer> pairs = words.mapToPair(WORDS_MAPPER);
         JavaPairRDD<String, Integer> counter = pairs.reduceByKey(WORDS_REDUCER);
 
-        counter.saveAsTextFile(args[1]);
+        counter.saveAsTextFile(new File(path).getParent() + "/result.txt");
     }
 }

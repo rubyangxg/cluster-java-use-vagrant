@@ -1,6 +1,0 @@
-hello spark
-hello world
-hello yangxg
-bye spark
-bye world
-bye yangxg

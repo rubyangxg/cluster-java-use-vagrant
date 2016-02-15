@@ -57,9 +57,9 @@ public class HadoopTest {
 
     @Test
     public void uploadFromLocal() throws URISyntaxException, IOException {
-        String file = getClass().getClassLoader().getResource("hadoop_test.txt").getFile();
+        String file = getClass().getClassLoader().getResource("4300.txt").getFile();
         Path localFile = new Path(file);
-        Path destFile = new Path("/test/hadoop_test.txt");
+        Path destFile = new Path("/test/4300.txt");
         fs.copyFromLocalFile(false, true, localFile, destFile);
     }
 
@@ -84,10 +84,10 @@ public class HadoopTest {
         job.setReducerClass(IntSumReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
-        Path destFile = new Path("/test/output01");
+        Path destFile = new Path("/test/hadoop_output");
         fs.delete(destFile, true);
-        FileInputFormat.addInputPath(job, new Path("/test/hadoop_test.txt"));
-        FileOutputFormat.setOutputPath(job, new Path("/test/output01"));
+        FileInputFormat.addInputPath(job, new Path("/test/4300.txt"));
+        FileOutputFormat.setOutputPath(job, new Path("/test/hadoop_output"));
         job.waitForCompletion(true);
     }
 

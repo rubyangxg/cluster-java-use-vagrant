@@ -44,14 +44,14 @@ public class WordCount {
                 .set("spark.executor.memory", "1g")
                 .setJars(new String[]{"/Users/yangxg/cluster-java-use-vagrant/target/vagrant-cluster-env-1.0.0-SNAPSHOT.jar"});
 
-
         JavaSparkContext context = new JavaSparkContext(conf);
 
-        JavaRDD<String> file = context.textFile("hdfs://node1:9000/test/hadoop_test.txt").cache();
+        JavaRDD<String> file = context.textFile("hdfs://node1:9000/test/4300.txt");
         JavaRDD<String> words = file.flatMap(WORDS_EXTRACTOR);
         JavaPairRDD<String, Integer> pairs = words.mapToPair(WORDS_MAPPER);
         JavaPairRDD<String, Integer> counter = pairs.reduceByKey(WORDS_REDUCER);
 
-        counter.saveAsTextFile("hdfs://node1:9000/test/hadoop_test_result");
+        counter.saveAsTextFile("hdfs://node1:9000/test/spark_output");
+//        counter.saveAsTextFile("/Users/yangxg/spark_output");
     }
 }

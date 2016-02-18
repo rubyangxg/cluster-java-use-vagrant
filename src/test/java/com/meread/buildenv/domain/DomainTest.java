@@ -17,11 +17,9 @@ public class DomainTest {
     static int processed = 0;
 
     public static void main(String[] args) throws IOException {
-        File cn = new File("/Users/yangxg/cluster-java-use-vagrant/src/test/resources/cn.txt");
-        File cn_result = new File("/Users/yangxg/cluster-java-use-vagrant/src/test/resources/cn_result.txt");
-        File pinyin_result = new File("/Users/yangxg/cluster-java-use-vagrant/src/test/resources/pinyin_result.txt");
-        File domain_result = new File("/Users/yangxg/cluster-java-use-vagrant/src/test/resources/domain_result.txt");
-        final File result = new File("/Users/yangxg/cluster-java-use-vagrant/src/test/resources/result.txt");
+        File domain_result = new File(DomainTest.class.getClassLoader().getResource("domain_result.txt").getFile());
+        final File result = new File(DomainTest.class.getClassLoader().getResource("result.txt").getFile());
+        FileUtils.write(result, "", false);
 //        String s = FileUtils.readFileToString(cn);
 //
 //        for (char c : s.toCharArray()) {

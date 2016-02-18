@@ -1,4 +1,4 @@
-package com.meread.buildenv.domain;
+package com.meread;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;

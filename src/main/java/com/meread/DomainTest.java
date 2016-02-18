@@ -17,8 +17,8 @@ public class DomainTest {
     static int processed = 0;
 
     public static void main(String[] args) throws IOException {
-        File domain_result = new File(DomainTest.class.getClassLoader().getResource("domain_result.txt").getFile());
-        final File result = new File(DomainTest.class.getClassLoader().getResource("result.txt").getFile());
+        File domain_result = new File(DomainTest.class.getClassLoader().getResource("tmp/domain_result.txt").getFile());
+        final File result = new File(DomainTest.class.getClassLoader().getResource("tmp/result.txt").getFile());
         FileUtils.write(result, "", false);
 //        String s = FileUtils.readFileToString(cn);
 //

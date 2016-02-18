@@ -9,9 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by yangxg on 16/2/18.
@@ -25,7 +22,6 @@ public class DomainTest {
         System.out.println("start..");
         File domain_result = new File(DomainTest.class.getClassLoader().getResource("tmp/domain_result.txt").getFile());
         final File result = new File(DomainTest.class.getClassLoader().getResource("tmp/result.txt").getFile());
-        FileUtils.write(result, "", false);
 //        String s = FileUtils.readFileToString(cn);
 //
 //        for (char c : s.toCharArray()) {
@@ -46,35 +42,29 @@ public class DomainTest {
 //            List<String> next = ci.next();
 //            FileUtils.write(domain_result, next.get(0) + next.get(1) + ".com" + System.getProperty("line.separator"), true);
 //        }
-        int threadSize = 2;
-
         final List<String> lines = FileUtils.readLines(domain_result);
         final int total = lines.size();
-        List<List<String>> partition = Lists.partition(lines, threadSize);
-        ExecutorService es = Executors.newFixedThreadPool(threadSize);
-        for (final List<String> process : partition) {
-            es.execute(new Runnable() {
-                @Override
-                public void run() {
-                    List<List<String>> subProcesses = Lists.partition(process, 10);
-                    for (List<String> subProcess : subProcesses) {
-                        StringBuilder sb = new StringBuilder(50);
-                        for (String s : subProcess) {
-                            sb.append(s).append(",");
-                        }
-                        String url = "http://panda.www.net.cn/cgi-bin/check.cgi?area_domain=" + sb;
-                        try {
-                            String response = Request.Get(url).execute().returnContent().asString();
-                            FileUtils.write(result, response + System.getProperty("line.separator"), true);
-                            processed += 10;
-                            logger.info(total + ":" + processed + " : " + response);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
+        List<List<String>> subProcesses = Lists.partition(lines, 10);
+
+        for (List<String> subProcess : subProcesses) {
+            StringBuilder sb = new StringBuilder(50);
+            for (String s : subProcess) {
+                sb.append(s).append(",");
+            }
+            String url = "http://panda.www.net.cn/cgi-bin/check.cgi?area_domain=" + sb;
+            try {
+                String response = Request.Get(url).execute().returnContent().asString();
+                FileUtils.write(result, response + System.getProperty("line.separator"), true);
+                processed += 10;
+                logger.info(total + ":" + processed + " : " + response);
+                lines.removeAll(subProcess);
+                FileUtils.writeLines(domain_result, lines, false);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (processed % 200 == 0) {
+                Thread.sleep(3000);
+            }
         }
-        es.awaitTermination(10, TimeUnit.DAYS);
     }
 }

@@ -54,11 +54,13 @@ public class DomainTest {
             String url = "http://panda.www.net.cn/cgi-bin/check.cgi?area_domain=" + sb;
             try {
                 String response = Request.Get(url).execute().returnContent().asString();
-                FileUtils.write(result, response + System.getProperty("line.separator"), true);
-                processed += 10;
-                logger.info(total + ":" + processed + " : " + response);
-                lines.removeAll(subProcess);
-                FileUtils.writeLines(domain_result, lines, false);
+                if (!response.contains("216")) {
+                    FileUtils.write(result, response + System.getProperty("line.separator"), true);
+                    processed += 10;
+                    logger.info(total + ":" + processed + " : " + response);
+                    lines.removeAll(subProcess);
+                    FileUtils.writeLines(domain_result, lines, false);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

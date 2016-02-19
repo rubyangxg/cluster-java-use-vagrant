@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +23,7 @@ public class DomainTest {
         System.out.println("start..");
         File domain_result = new File(DomainTest.class.getClassLoader().getResource("tmp/domain_result.txt").getFile());
         final File result = new File(DomainTest.class.getClassLoader().getResource("tmp/result.txt").getFile());
+        final File log = new File(DomainTest.class.getClassLoader().getResource("tmp/log.txt").getFile());
 //        String s = FileUtils.readFileToString(cn);
 //
 //        for (char c : s.toCharArray()) {
@@ -44,10 +46,10 @@ public class DomainTest {
 //        }
         final List<String> lines = FileUtils.readLines(domain_result);
         final int total = lines.size();
-        List<List<String>> subProcesses = Lists.partition(lines, 10);
+        List<List<String>> subProcesses = Lists.partition(lines, 100);
 
         for (List<String> subProcess : subProcesses) {
-            StringBuilder sb = new StringBuilder(50);
+            StringBuilder sb = new StringBuilder(200);
             for (String s : subProcess) {
                 sb.append(s).append(",");
             }
@@ -56,16 +58,19 @@ public class DomainTest {
                 String response = Request.Get(url).execute().returnContent().asString();
                 if (!response.contains("216")) {
                     FileUtils.write(result, response + System.getProperty("line.separator"), true);
-                    processed += 10;
+                    processed += 100;
                     logger.info(total + ":" + processed + " : " + response);
-                    lines.removeAll(subProcess);
-                    FileUtils.writeLines(domain_result, lines, false);
+                    FileUtils.write(log, total + ":" + processed + " : " + response + System.getProperty("line.separator"), true);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (processed % 200 == 0) {
-                Thread.sleep(3000);
+            if (processed % 4000 == 0) {
+                List<String> copy = new ArrayList<String>(lines);
+                for (String s : subProcess) {
+                    copy.remove(s);
+                    FileUtils.writeLines(domain_result, copy, false);
+                }
             }
         }
     }
